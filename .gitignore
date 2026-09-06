@@ -1,4 +1,61 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test and coverage
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# ExpirioBot specific
 image.jpg
-Learning Curve/Model Trial 1/model.h5
-Learning Curve/Model Trial 2/myModel.h5
-Learning Curve/Robot Arm Movement/Dofbot.zip
+*.h5
+*.model
+*.zip
+
+# Logs
+*.log
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Local configuration
+.env
+.env.local
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# py_install build artifacts
+py_install/build/
+py_install/*.egg-info/
+py_install/Arm_Lib.egg-info/

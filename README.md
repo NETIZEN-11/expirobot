@@ -9,117 +9,122 @@
 ExpirioBot is an automated robotic system designed to identify and sort products based on their expiry dates. The system utilizes computer vision to capture images of products, extract expiry dates using Optical Character Recognition (OCR), and control a robotic arm to move expired or valid products to designated locations.
 
 ## Features
-- **OCR-Based Expiry Date Detection**: Extract expiry dates from product labels using `Tesseract OCR`.
-- **Robotic Arm Sorting**: A robotic arm sorts products into `expired` and `valid` categories.
+
+- **OCR-Based Expiry Date Detection**: Extract expiry dates from product labels using `Tesseract OCR`
+- **Robotic Arm Sorting**: A robotic arm sorts products into `expired` and `valid` categories
 - **Real-Time Video Feed**: Displays a live feed of the camera input
-- **Counters for Products**: Tracks the number of expired and valid products in real-time.
-- **Threaded Architecture**: Ensures smooth operation with concurrent frame capturing and processing.
+- **Counters for Products**: Tracks the number of expired and valid products in real-time
+- **Threaded Architecture**: Ensures smooth operation with concurrent frame capturing and processing
+- **Cross-Platform**: Runs on Raspberry Pi (with hardware) and Windows (mock mode)
+- **Configurable**: All settings managed through config file, no hardcoded values
+- **Modular Design**: Clean separation of concerns with shared modules
 
 ## Requirements
-### Hardware
+
+### Hardware (Raspberry Pi Version)
 - DOFBOT-Pi robotic arm
-- Processing Computer (Rasperry Pi 4 or equivalent recommended)
+- Processing Computer (Raspberry Pi 4 or equivalent recommended)
 - Camera (USB or Pi Camera)
 
 ### Software
-- `Python 3`
+- `Python 3.7+`
 - `OpenCV (cv2)`
 - `Pillow (PIL)`
 - `Pytesseract`
-- `tkinter`
-- `threading`
-- `queue`
-- `re`
-- `time`
-- `datetime`
-- `Arm_Lib` (custom library for controlling the robotic arm)
-- `Tesseract OCR` installed on your system
+- `tkinter` (usually built-in)
+- `numpy`
+- `Arm_Lib` (custom library for controlling the robotic arm - Raspberry Pi only)
+- `Tesseract OCR` installed on your system (required for OCR modes)
 
 ## Installation
-1. Clone the repository:
-   >bash code
-   ```
-   git clone https://github.com/EdwinAbdonShayo/ExpirioBot.git
-   ```
-   ```
-   cd ExpirioBot
-   ```
 
-2. Install the required Python packages:
-   >bash code
-   ```
-   pip install opencv-python pillow pytesseract tkinter
-   ```
+### 1. Clone the repository
+```bash
+git clone https://github.com/EdwinAbdonShayo/ExpirioBot.git
+cd ExpirioBot
+```
 
-3. Install Tesseract OCR:
-   - For Linux, use your package manager:
-      >bash code
-      ```
-      sudo apt-get install tesseract-ocr
-      ```   
+### 2. Install Python dependencies
+```bash
+pip install -r requirements.txt
+```
 
-   - For Windows, download the installer from Tesseract at [UB Mannheim](https://github.com/UB-Mannheim/tesseract/wiki).
+### 3. Install Tesseract OCR
 
-   - For macOS, use Homebrew:
-      >bash code
-      ```
-      brew install tesseract
-      ```
+**Windows:**
+- Download installer from [UB Mannheim](https://github.com/UB-Mannheim/tesseract/wiki)
+- Or use winget: `winget install UB-Mannheim.TesseractOCR`
 
-4. Installing Arm Library: Ensure the py_install is in your project folder.
-   >bash code
-   ```
-   cd py_install
-   sudo python3 setup.py install
-   ```
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt-get update && sudo apt-get install tesseract-ocr
+```
+
+**macOS:**
+```bash
+brew install tesseract
+```
+
+### 4. Install Arm Library (Raspberry Pi only)
+```bash
+cd py_install
+pip install -e .
+cd ..
+```
 
 ## Repository Structure
-      ExpirioBot/
-      │
-      ├── ExpirioBot.py                    # Main script for Raspberry Pi with DOFBOT arm
-      ├── ExpirioBot_Windows.py            # Windows version with Tesseract OCR
-      ├── ExpirioBot_NoTesseract.py        # Windows version with manual date entry (no Tesseract)
-      ├── test_setup.py                    # Dependency checker script
-      │
-      ├── py_install             # Custom library for robotic arm control.
-      │   ├── Arm_Lib            # Folder with robotic arm library dependencies.
-      │   └── setup.py           # Arm_Lib library setup file.
-      │
-      ├── ocr.py                 # Script with the optical character recognition (extracting text out of the images and gets date using patterns).
-      │
-      ├── objectMover.py         # Script for the robot arm movement.
-      │
-      ├── image.jpg              # Sample image captured from camera and preprocessed.
-      │
-      ├── Learning Curve/        # Experimental scripts for trials and testing.
-      │   ├── Main
-      │   │   ├── ExpirioBot1.py    # Experimental script 1.
-      │   │   ├── ExpirioBot2.py    # Experimental script 2.
-      │   │   ├── ...               # Additional experimental scripts.
-      │   │
-      │   ├── ...                # Additional experimental scripts.
-      │
-      └── README.md              # This README file.
+
+```
+ExpirioBot/
+│
+├── ExpirioBot.py                    # Main script for Raspberry Pi with DOFBOT arm
+├── ExpirioBot_Windows.py            # Windows version with Tesseract OCR (mock arm)
+├── ExpirioBot_NoTesseract.py        # Windows version with manual date entry (no Tesseract needed)
+├── requirements.txt                 # Python dependencies
+├── .gitignore                       # Git ignore rules
+├── README.md                        # This file
+│
+├── expiriobot/                      # Main package
+│   ├── __init__.py                  # Package initialization
+│   ├── config.py                    # Configuration management
+│   ├── arm_control.py               # Robotic arm control (physical + mock)
+│   ├── ocr_processor.py             # OCR processing and date extraction
+│   ├── camera.py                    # Camera management
+│   └── gui.py                       # GUI components
+│
+├── py_install/                      # Arm_Lib package for Raspberry Pi
+│   ├── setup.py                     # Package setup
+│   └── Arm_Lib/                     # Arm library source
+│       ├── __init__.py
+│       └── Arm_Lib.py
+│
+└── tests/                           # Test files
+    ├── test_setup.py                # Dependency checker
+    ├── test_config.py               # Config tests
+    └── test_ocr_processor.py        # OCR processor tests
+```
 
 ## Usage
 
 ### For Raspberry Pi (Original Hardware)
+
 1. **Connect Hardware**:
-   - Attach the camera (in this case, the Raspberry Pi) and ensure it is accessible.
-   - Connect the DOFBOT robotic arm to the System.
+   - Attach the camera and ensure it is accessible
+   - Connect the DOFBOT robotic arm to the system
+
 2. **Run the Program**:
-   >bash code
-   ```
+   ```bash
    python3 ExpirioBot.py
    ```
+
 3. **Control Through the GUI**:
-- `Start`: Begin capturing and processing frames.
-- `Stop`: Pause the system.
-- View live video feed and counters for expired and valid products.
+   - `Start`: Begin capturing and processing frames
+   - `Stop`: Pause the system
+   - View live video feed and counters for expired and valid products
 
 ### For Windows (Without Physical Hardware)
 
-#### Option 1: Manual Date Entry (No Tesseract Required) - **RECOMMENDED**
+#### Option 1: Manual Date Entry (No Tesseract Required) - **RECOMMENDED FOR TESTING**
 ```bash
 python ExpirioBot_NoTesseract.py
 ```
@@ -138,49 +143,113 @@ python ExpirioBot_Windows.py
 - Mock arm simulation
 
 ### Key Functions
-- `arm_clamp_block(enable)`: Controls the clamp of the robotic arm (servo 6).
-- `arm_move(p, s_time)`: Moves the arm to specified positions.
-- `preprocess_image(frame)`: Prepares the image for OCR processing.
-- `extract_expiry_date(image_path)`: Extracts the expiry date from the image using OCR.
-- `process_frames(frame_queue_container, processing_event, producer_allowed_event)`: Processes frames from the queue.
-- `capture_frames(cap, frame_queue_container, producer_allowed_event)`: Captures frames from the camera.
+- `arm_clamp_block(enable)`: Controls the clamp of the robotic arm (servo 6)
+- `arm_move(p, s_time)`: Moves the arm to specified positions
+- `preprocess_image(frame)`: Prepares the image for OCR processing
+- `extract_expiry_date(image_path)`: Extracts the expiry date from the image using OCR
+- `process_frames(...)`: Processes frames from the queue
+- `capture_frames(...)`: Captures frames from the camera
+
+## Configuration
+
+All configurable settings are in `expiriobot/config.py`. You can customize:
+
+### Arm Positions
+```python
+# In config.py or via environment variables
+ARM_POSITIONS = {
+    "front": [90, 75, 0, 30, 90],
+    "left": [180, 75, 0, 30, 90],
+    "right": [0, 75, 0, 30, 90],
+    # ... more positions
+}
+```
+
+### Camera Settings
+```bash
+export EXPIRIOBOT_CAMERA_INDEX=1  # Use camera index 1
+```
+
+### Tesseract Path
+```bash
+export EXPIRIOBOT_TESSERACT_PATH="/usr/bin/tesseract"
+```
+
+### Mock Arm Mode
+```bash
+export EXPIRIOBOT_MOCK_ARM=true
+```
 
 ## Customization
+
 1. **Modify Predefined Arm Positions**:
-   - Update positions in the script (`p_front`, `p_left`, etc.) to match your setup.
+   - Update positions in `expiriobot/config.py` (`ArmConfig.positions`)
+
 2. **Change Thresholds for Image Preprocessing**:
-   - Edit the `preprocess_image` function to adjust grayscale or binary thresholds.
+   - Edit `OCRConfig.threshold_value` in `expiriobot/config.py`
+
 3. **Extend OCR Patterns**:
-   - Modify the `extract_expiry_date` function to handle additional date formats.
+   - Modify `OCRConfig.date_patterns` in `expiriobot/config.py` to handle additional date formats
+
+4. **Add New Camera Resolutions**:
+   - Modify `CameraConfig` in `expiriobot/config.py`
+
+## Running Tests
+
+```bash
+# Check dependencies
+python tests/test_setup.py
+
+# Run unit tests
+pytest tests/
+```
 
 ## Troubleshooting
-- **Camera Not Detected**:
-   - Ensure the camera is connected and accessible through OpenCV.
-- **Robotic Arm Not Responding**:
-   - Verify the arm is powered, correctly configured & arm library is installed.
-- **OCR Not Extracting Dates**:
-   - Check the Tesseract installation and ensure the image has clear, legible text.
-- **Windows smbus Error**:
-   - Use `ExpirioBot_Windows.py` or `ExpirioBot_NoTesseract.py` which have mock arm support
-- **Check All Dependencies**:
-   ```bash
-   python test_setup.py
-   ```
-   This will verify all required packages and hardware
+
+| Issue | Solution |
+|-------|----------|
+| Camera Not Detected | Ensure camera is connected and accessible through OpenCV. Check camera index in config. |
+| Robotic Arm Not Responding | Verify arm is powered, correctly configured & Arm_Lib is installed (Raspberry Pi). |
+| OCR Not Extracting Dates | Check Tesseract installation. Ensure image has clear, legible text. Adjust preprocessing thresholds. |
+| Windows smbus Error | Use `ExpirioBot_Windows.py` or `ExpirioBot_NoTesseract.py` which have mock arm support |
+| Import Errors | Run `pip install -r requirements.txt` and ensure `py_install` is installed for Raspberry Pi |
+| Tesseract Not Found | Install Tesseract OCR and ensure it's in PATH, or set `EXPIRIOBOT_TESSERACT_PATH` |
+
+## Development
+
+### Code Style
+```bash
+# Format code
+black expiriobot/ tests/
+
+# Lint
+flake8 expiriobot/ tests/
+
+# Type check
+mypy expiriobot/
+```
+
+### Adding New Features
+1. Add configuration to `expiriobot/config.py`
+2. Implement core logic in appropriate module (`arm_control.py`, `ocr_processor.py`, etc.)
+3. Update entry points (`ExpirioBot.py`, `ExpirioBot_Windows.py`, `ExpirioBot_NoTesseract.py`)
+4. Add tests in `tests/`
 
 ## Acknowledgments
-- OpenCV for image processing.
-- Tesseract OCR for text extraction.
-- DOFBOT for providing a reliable robotic arm solution.
-- tkinter for GUI development.
-- Lastly, **Nivede** & **Karel** for their contributions (minimal) to the project.
+
+- OpenCV for image processing
+- Tesseract OCR for text extraction
+- DOFBOT for providing a reliable robotic arm solution
+- tkinter for GUI development
+- Yahboom Technology for Arm_Lib
 
 ## The Team
 
-   - [*Sakina*](https://github.com/saki3110)
-   - [*Ishan*](https://github.com/ishan23310)  
-   - [*Hans*](https://github.com/gt663) 
-   - [*Edwin*](https://edwinshayo.com)
+- [Sakina](https://github.com/saki3110)
+- [Ishan](https://github.com/ishan23310)  
+- [Hans](https://github.com/gt663) 
+- [Edwin](https://edwinshayo.com)
 
-   *For any inquiries or issues, reach out to any of the above*
+*For any inquiries or issues, reach out to any of the above*
+
 ***
