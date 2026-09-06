@@ -76,7 +76,10 @@ ExpirioBot is an automated robotic system designed to identify and sort products
 ## Repository Structure
       ExpirioBot/
       │
-      ├── ExpirioBot.py          # Main script for image capture, processing, and robotic arm movement.
+      ├── ExpirioBot.py                    # Main script for Raspberry Pi with DOFBOT arm
+      ├── ExpirioBot_Windows.py            # Windows version with Tesseract OCR
+      ├── ExpirioBot_NoTesseract.py        # Windows version with manual date entry (no Tesseract)
+      ├── test_setup.py                    # Dependency checker script
       │
       ├── py_install             # Custom library for robotic arm control.
       │   ├── Arm_Lib            # Folder with robotic arm library dependencies.
@@ -99,6 +102,8 @@ ExpirioBot is an automated robotic system designed to identify and sort products
       └── README.md              # This README file.
 
 ## Usage
+
+### For Raspberry Pi (Original Hardware)
 1. **Connect Hardware**:
    - Attach the camera (in this case, the Raspberry Pi) and ensure it is accessible.
    - Connect the DOFBOT robotic arm to the System.
@@ -111,6 +116,26 @@ ExpirioBot is an automated robotic system designed to identify and sort products
 - `Start`: Begin capturing and processing frames.
 - `Stop`: Pause the system.
 - View live video feed and counters for expired and valid products.
+
+### For Windows (Without Physical Hardware)
+
+#### Option 1: Manual Date Entry (No Tesseract Required) - **RECOMMENDED**
+```bash
+python ExpirioBot_NoTesseract.py
+```
+- ✅ Works without Tesseract OCR installation
+- ✅ Live camera preview
+- ✅ Manual date input for testing
+- ✅ Mock arm simulation (console output)
+- Enter dates in format: DD/MM/YYYY (e.g., 25/12/2024)
+
+#### Option 2: Full OCR Version (Tesseract Required)
+```bash
+python ExpirioBot_Windows.py
+```
+- Requires Tesseract OCR installation
+- Automatic date extraction from camera
+- Mock arm simulation
 
 ### Key Functions
 - `arm_clamp_block(enable)`: Controls the clamp of the robotic arm (servo 6).
@@ -135,6 +160,13 @@ ExpirioBot is an automated robotic system designed to identify and sort products
    - Verify the arm is powered, correctly configured & arm library is installed.
 - **OCR Not Extracting Dates**:
    - Check the Tesseract installation and ensure the image has clear, legible text.
+- **Windows smbus Error**:
+   - Use `ExpirioBot_Windows.py` or `ExpirioBot_NoTesseract.py` which have mock arm support
+- **Check All Dependencies**:
+   ```bash
+   python test_setup.py
+   ```
+   This will verify all required packages and hardware
 
 ## Acknowledgments
 - OpenCV for image processing.
